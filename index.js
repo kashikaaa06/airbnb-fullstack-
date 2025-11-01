@@ -5,6 +5,7 @@ const mongo_url = "mongodb://127.0.0.1:27017/travelxgo";
 const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
+const ejsMate = require('ejs-mate'); // Fixed import
 
 main()
   .then(() => {
@@ -18,11 +19,12 @@ async function main() {
   await mongoose.connect(mongo_url);
 }
 
+app.engine('ejs', ejsMate); // Add this line
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-
+app.use(express.static(path.join(__dirname,"/public")));
 //index route
 app.get("/listings", async (req, res) => {
   const allListings = await Listing.find({});
@@ -61,13 +63,15 @@ app.put("/listings/:id", async (req, res) => {
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect("/listings");
 });
+
 //delete route 
-app.delete("/listings/:id",async (req,res) => {
-  let {id} = req.params ; 
+app.delete("/listings/:id", async (req, res) => {
+  let { id } = req.params;
   let deleteListing = await Listing.findByIdAndDelete(id);
   console.log(deleteListing);
   res.redirect("/listings");
-})
+});
+
 app.get("/", (req, res) => {
   res.send("hi , I am groot");
 });
