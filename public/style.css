@@ -1,4 +1,8 @@
 /* Reset and base styles */
+body {
+     font-family: "Plus Jakarta Sans", sans-serif !important ;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -160,4 +164,48 @@ button {
 
 button:hover {
     background-color: #e03a44;
+}
+
+.card {
+    border: none !important ;
+    margin-bottom : 2rem;
+
+}
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important ;
+    object-fit: cover !important ;
+}
+.card-body {
+    padding:0 !important;
+}
+.card-text p {
+    font-weight:400;
+}
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card-link .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.card-link:hover .card {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.card-img-overlay {
+    opacity: 0 ;
+}
+.card-img-overlay:hover {
+    opacity: 0.2 ;
+    background-color: white ;
 }
