@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travelxgo</title>
-</head>
-<body>
+
+<%- layout('./layouts/boilerplate') -%>
     <h3>Listing details:</h3>
     <ul>
         <li><%= listing.title %></li>
@@ -21,5 +15,5 @@
   <form method="POST" action="/listings/<%=listing._id %>?_method=DELETE">
      <button>Delete this listing</button>
    </form>
-</body>
-</html>
+
+   
