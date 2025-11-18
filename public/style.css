@@ -209,3 +209,10 @@ button:hover {
     opacity: 0.2 ;
     background-color: white ;
 }
+/* show page */
+.edit {
+   text-decoration: none;
+}
+.button {
+    display:flex;
+}
