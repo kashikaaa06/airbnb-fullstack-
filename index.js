@@ -6,7 +6,7 @@ const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate"); // Fixed import
-
+const wrapAsync = require("./utils/wrapAsync.js");
 main()
   .then(() => {
     console.log("connected to db");
@@ -44,15 +44,13 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 //create route 
-app.post("/listings", async (req, res,next) => {
- try {
+app.post("/listings",wrapAsync(async (req, res,next) => {
+ 
    const newlisting = new Listing(req.body.listing);
    await newlisting.save();
    res.redirect("/listings");
- } catch(err) {
-  next(err);
- }
-});
+
+}));
 
 //edit route 
 app.get("/listings/:id/edit", async (req, res) => {
