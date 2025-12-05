@@ -28,6 +28,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
 
+const validateListing = (req,res,next) => {
+   let {error} = listingSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    let errmsg = error.details.map((el)=> el.message).join(",");
+    throw new ExpressError(400,errmsg);
+  }
+}
+
 // Routes
 app.get("/listings", wrapAsync(async (req, res) => {
   const allListings = await Listing.find({});
@@ -44,12 +53,8 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
   res.render("listings/show.ejs", { listing });
 }));
 
-app.post("/listings", wrapAsync(async (req, res) => {
-  let result = listingSchema.validate(req.body);
-  console.log(result);
-  if (result.error) {
-    throw new ExpressError(400,result.error);
-  }
+app.post("/listings",validateListing, wrapAsync(async (req, res) => {
+ 
   const newlisting = new Listing(req.body.listing);
   await newlisting.save();
   res.redirect("/listings");
@@ -61,7 +66,7 @@ app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
   res.render("listings/edit.ejs", { listing });
 }));
 
-app.put("/listings/:id", wrapAsync(async (req, res) => {
+app.put("/listings/:id",validateListing, wrapAsync(async (req, res) => {
   let { id } = req.params;
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect("/listings");
