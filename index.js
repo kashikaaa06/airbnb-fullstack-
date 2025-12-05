@@ -8,7 +8,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-
+const {listingSchema} = require("./schema.js");
 main()
   .then(() => {
     console.log("connected to db");
@@ -45,6 +45,11 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 }));
 
 app.post("/listings", wrapAsync(async (req, res) => {
+  let result = listingSchema.validate(req.body);
+  console.log(result);
+  if (result.error) {
+    throw new ExpressError(400,result.error);
+  }
   const newlisting = new Listing(req.body.listing);
   await newlisting.save();
   res.redirect("/listings");
