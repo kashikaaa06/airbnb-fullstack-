@@ -83,7 +83,7 @@ app.get("/", (req, res) => {
   res.send("hi , I am groot");
 });
 
-// FIXED: 404 handler - use escaped asterisk or regex
+
 app.use( (req, res, next) => {
   next(new ExpressError(404, "Page not found"));
 });
@@ -92,7 +92,7 @@ app.use( (req, res, next) => {
 app.use((err, req, res, next) => {
   let { statusCode = 500, message = "Something went wrong!" } = err;
   res.status(statusCode).render("listings/error.ejs",{message});
-  //res.status(statusCode).render("error.ejs",{ message });
+
 });
 
 app.listen(8000, () => {
