@@ -8,7 +8,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema} = require("./schema.js");
+const {listingSchema,reviewSchema} = require("./schema.js");
 const Review = require("./models/review.js");
 main()
   .then(() => {
@@ -28,13 +28,25 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
-
-const validateListing = (req,res,next) => {
+// server validarion middleware
+const validateListing= (req,res,next) => {
    let {error} = listingSchema.validate(req.body);
   console.log(error);
   if (error) {
     let errmsg = error.details.map((el)=> el.message).join(",");
     throw new ExpressError(400,errmsg);
+  }else {
+    next();
+  }
+}
+const validateReview= (req,res,next) => {
+   let {error} = reviewSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    let errmsg = error.details.map((el)=> el.message).join(",");
+    throw new ExpressError(400,errmsg);
+  } else{
+    next();
   }
 }
 
@@ -80,14 +92,14 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
   res.redirect("/listings");
 }));
 // reviews route
-app.post("/listings/:id/review", async(req,res)=> {
+app.post("/listings/:id/reviews", validateReview,wrapAsync( async(req,res)=> {
   let listing = await Listing.findById(req.params.id);
   let newreview = new Review(req.body.review);
   listing.reviews.push(newreview);
   await newreview.save();
   await listing.save();
   res.redirect(`/listings/${listing._id}`);
-});
+}));
 app.get("/", (req, res) => {
   res.send("hi , I am groot");
 });
