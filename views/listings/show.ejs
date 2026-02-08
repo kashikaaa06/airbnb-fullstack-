@@ -1,4 +1,3 @@
-
 <%- layout('./layouts/boilerplate') -%>
     <div class="row">
     <div class="col-8 offset-2">
@@ -26,9 +25,19 @@
  </form>
 </div>
 </div>
+ <div class="col-8 offset-2 mb-3">
+    <h4><b>Leave a Review</b></h4>
+    <form action="/listings/<%=listing.id %>/review" method="POST">
+        <div class="mb-3 mt-3">
+            <label for="rating" class="form-label">Rating</label>
+            <input type="range" min="1" max="5" id="rating" name="review[rating]" class="form-range w-50"/>
+        </div>
+        <div class="mb-3 mt-3">
+            <label for="comment" class="form-label">Comments</label>
+            <textarea name="review[comment]" id="comment" class="form-control" rows="5" cols="5"></textarea>
+        </div>
+        <br>
+        <button class="btn btn-outline-dark">Submit</button>
+    </form>
 </div>
-
-
-
-
-
+</div>

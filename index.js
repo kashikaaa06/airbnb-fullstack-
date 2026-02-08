@@ -9,6 +9,7 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const {listingSchema} = require("./schema.js");
+const Review = require("./models/review.js");
 main()
   .then(() => {
     console.log("connected to db");
@@ -71,14 +72,22 @@ app.put("/listings/:id",validateListing, wrapAsync(async (req, res) => {
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect("/listings");
 }));
-
+//delete route
 app.delete("/listings/:id", wrapAsync(async (req, res) => {
   let { id } = req.params;
   let deleteListing = await Listing.findByIdAndDelete(id);
   console.log(deleteListing);
   res.redirect("/listings");
 }));
-
+// reviews route
+app.post("/listings/:id/review", async(req,res)=> {
+  let listing = await Listing.findById(req.params.id);
+  let newreview = new Review(req.body.review);
+  listing.reviews.push(newreview);
+  await newreview.save();
+  await listing.save();
+  res.redirect(`/listings/${listing._id}`);
+});
 app.get("/", (req, res) => {
   res.send("hi , I am groot");
 });
