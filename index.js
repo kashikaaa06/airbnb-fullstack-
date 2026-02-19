@@ -10,6 +10,8 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const {listingSchema,reviewSchema} = require("./schema.js");
 const Review = require("./models/review.js");
+const listings = require("./routes/listing.js");
+
 main()
   .then(() => {
     console.log("connected to db");
@@ -91,6 +93,7 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
   console.log(deleteListing);
   res.redirect("/listings");
 }));
+app.use("/listings", listings);
 // reviews route
 app.post("/listings/:id/reviews", validateReview,wrapAsync( async(req,res)=> {
   let listing = await Listing.findById(req.params.id);
