@@ -1,8 +1,8 @@
 const express = require("express");
-const router = express();
+const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const {listingSchema,reviewSchema} = require("../schema.js");
+const {listingSchema} = require("../schema.js");
 const Listing = require("../models/listing.js");
 
 const validateListing= (req,res,next) => {
@@ -16,8 +16,6 @@ const validateListing= (req,res,next) => {
   }
 }
 
-
-
 router.get("/", wrapAsync(async (req, res) => {
   const allListings = await Listing.find({});
   res.render("listings/index.ejs", { allListings });
@@ -30,7 +28,7 @@ router.get("/new", wrapAsync(async (req, res) => {
 router.get("/:id", wrapAsync(async (req, res) => {
   let { id } = req.params;
   const listing = await Listing.findById(id).populate("reviews");
-  res.render("/show.ejs", { listing });
+  res.render("listings/show.ejs", { listing });
 }));
 
 router.post("/",validateListing, wrapAsync(async (req, res) => {
@@ -45,22 +43,19 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
   const listing = await Listing.findById(id);
   res.render("listings/edit.ejs", { listing });
 }));
-router.get("/:id/edit", wrapAsync(async (req, res) => {
-  const { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/edit.ejs", { listing });
-}));
 
 router.put("/:id",validateListing, wrapAsync(async (req, res) => {
   let { id } = req.params;
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   res.redirect("/listings");
 }));
-//delete route
+
+
 router.delete("/:id", wrapAsync(async (req, res) => {
   let { id } = req.params;
   let deleteListing = await Listing.findByIdAndDelete(id);
   console.log(deleteListing);
   res.redirect("/listings");
 }));
-module.exports = router ; 
+
+module.exports = router;
