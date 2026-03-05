@@ -58,4 +58,4 @@ router.delete("/:id", wrapAsync(async (req, res) => {
   res.redirect("/listings");
 }));
 
-module.exports = router;
+module.exports = router; 
