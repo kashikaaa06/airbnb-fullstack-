@@ -65,6 +65,14 @@ app.use((req, res, next) => {
 
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
+app.get("/demouser",async(req , res)=> {
+  let fakeuser = new User({
+    username : "cutu",
+    email: "cutuiscute@example.com",
+  })
+  let registeruser = await User.register(fakeuser, "hloooo");
+  res.send(registeruser);
+})
 
 app.get("/", (req, res) => {
   res.send("hi , I am groot");
