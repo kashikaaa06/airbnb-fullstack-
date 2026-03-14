@@ -9,8 +9,9 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-const listings = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
+const listingrouter = require("./routes/listing.js");
+const reviewrouter = require("./routes/review.js");
+const userrouter = require("./routes/user.js");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js"); 
@@ -63,8 +64,10 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
+app.use("/listings", listingrouter);
+app.use("/listings/:id/reviews", reviewrouter);
+app.use("/", userrouter);
+
 app.get("/demouser",async(req , res)=> {
   let fakeuser = new User({
     username : "cutu",
