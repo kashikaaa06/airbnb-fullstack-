@@ -11,6 +11,9 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js"); 
 
 const sessionOptions = { 
     secret: "mysecretstring" , 
@@ -44,6 +47,15 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(cookieParser());
 app.use(session(sessionOptions));
 app.use(flash());
+
+// ===== ADD THESE PASSPORT LINES =====
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+// ===== END OF PASSPORT LINES =====
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
