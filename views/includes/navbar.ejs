@@ -1,26 +1,47 @@
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">  <i class="fa-regular fa-compass"></i>   </a>
-    <button class="navbar-toggler" 
-    type="button" data-bs-toggle="collapse"
-    data-bs-target="#navbarNavAltMarkup" 
-    >
-    <span class="navbar-toggler-icon"></span>
+    <a class="navbar-brand" href="/listings">
+      <i class="fas fa-plane" style="color: red;"></i> Travelxgo
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link "  href="/">Home</a>
-        <a class="nav-link" href="/listings">All listing</a>
-        <a class="nav-link" href="/listings/new">Add new Listings</a>
-        
-      </div>
-       <div class="navbar-nav ms-auto">
-        <% if(!currentuser){ %>
-        <a class="nav-link "  href="/signup">Sign up</a>
-        <a class="nav-link" href="/login">Log in</a>
-       <% } else { %>
-        <a class="nav-link" href="/logout">Log out</a>
-       <% } %>
-      </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/listings">
+            <i class="fas fa-home" style="color: red;"></i> Home
+          </a>
+        </li>
+        <% if(!currUser) { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/signup">
+              <i class="fas fa-user-plus" style="color: red;"></i> Sign up
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">
+              <i class="fas fa-sign-in-alt" style="color: red;"></i> Log in
+            </a>
+          </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/listings/new">
+              <i class="fas fa-plus-circle" style="color: red;"></i> New Listing
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-circle" style="color: red;"></i> <%= currUser.username %>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/logout">
+                <i class="fas fa-sign-out-alt" style="color: red;"></i> Logout
+              </a></li>
+            </ul>
+          </li>
+        <% } %>
+      </ul>
+    </div>
   </div>
 </nav>
