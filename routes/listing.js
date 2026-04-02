@@ -5,7 +5,7 @@ const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
 const { loggedin } = require("../middleware.js");
-
+const {isOwner} = require("../middleware.js");
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   console.log(error);
@@ -46,7 +46,7 @@ router.post("/", loggedin, validateListing, wrapAsync(async (req, res) => {
   res.redirect("/listings");
 }));
 
-router.get("/:id/edit", loggedin, wrapAsync(async (req, res) => {
+router.get("/:id/edit", loggedin, isOwner , wrapAsync(async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
   if (!listing) {
@@ -60,10 +60,10 @@ router.put("/:id", loggedin, validateListing, wrapAsync(async (req, res) => {
   let { id } = req.params;
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   req.flash("success", "Successfully listing updated");
-  res.redirect("/listings");
+  res.redirect(`/listings/${id}`);
 }));
 
-router.delete("/:id", loggedin, wrapAsync(async (req, res) => {
+router.delete("/:id", loggedin,isOwner, wrapAsync(async (req, res) => {
   let { id } = req.params;
   let deleteListing = await Listing.findByIdAndDelete(id);
   req.flash("success", "Successfully listing deleted");
