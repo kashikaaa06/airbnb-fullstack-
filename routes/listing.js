@@ -5,7 +5,9 @@ const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
 const { loggedin } = require("../middleware.js");
-const {isOwner} = require("../middleware.js");
+const { isOwner } = require("../middleware.js");
+const listingController = require("../controllers/listing.js");
+
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   console.log(error);
@@ -17,17 +19,14 @@ const validateListing = (req, res, next) => {
   }
 };
 
-router.get("/", wrapAsync(async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
-}));
+router.get("/", wrapAsync(listingController.index));
 
 router.get("/new", loggedin, wrapAsync(async (req, res) => {
   res.render("listings/new.ejs");
 }));
 
 router.get("/:id", wrapAsync(async (req, res) => {
-   let { id } = req.params;
+  let { id } = req.params;
   const listing = await Listing.findById(id)
     .populate({
       path: "reviews",
@@ -52,7 +51,7 @@ router.post("/", loggedin, validateListing, wrapAsync(async (req, res) => {
   res.redirect("/listings");
 }));
 
-router.get("/:id/edit", loggedin, isOwner , wrapAsync(async (req, res) => {
+router.get("/:id/edit", loggedin, isOwner, wrapAsync(async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
   if (!listing) {
@@ -69,7 +68,7 @@ router.put("/:id", loggedin, validateListing, wrapAsync(async (req, res) => {
   res.redirect(`/listings/${id}`);
 }));
 
-router.delete("/:id", loggedin,isOwner, wrapAsync(async (req, res) => {
+router.delete("/:id", loggedin, isOwner, wrapAsync(async (req, res) => {
   let { id } = req.params;
   let deleteListing = await Listing.findByIdAndDelete(id);
   req.flash("success", "Successfully listing deleted");
