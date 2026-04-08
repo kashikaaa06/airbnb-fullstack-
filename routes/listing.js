@@ -4,8 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
-const { loggedin } = require("../middleware.js");
-const { isOwner } = require("../middleware.js");
+const { loggedin, isOwner } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 
 const validateListing = (req, res, next) => {
@@ -19,18 +18,18 @@ const validateListing = (req, res, next) => {
   }
 };
 
-router.get("/", wrapAsync(listingController.index));
+router
+  .route("/")
+  .get(wrapAsync(listingController.index))
+  .post(loggedin, validateListing, wrapAsync(listingController.createpost));
+
+router
+  .route("/:id")
+  .get(wrapAsync(listingController.show))
+  .put(loggedin, isOwner, validateListing, wrapAsync(listingController.update))
+  .delete(loggedin, isOwner, wrapAsync(listingController.delete));
 
 router.get("/new", loggedin, wrapAsync(listingController.rendernew));
-
-router.get("/:id", wrapAsync(listingController.show));
-
-router.post("/", loggedin, validateListing, wrapAsync(listingController.createpost));
-
 router.get("/:id/edit", loggedin, isOwner, wrapAsync(listingController.edit));
-
-router.put("/:id", loggedin, validateListing, wrapAsync(listingController.update));
-
-router.delete("/:id", loggedin, isOwner, wrapAsync(listingController.delete));
 
 module.exports = router;
