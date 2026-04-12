@@ -5,11 +5,12 @@ module.exports.index = async (req, res) => {
   res.render("listings/index.ejs", { allListings });
 };
 
-module.exports.rendernew = (req,res,next) => {
+module.exports.rendernew = (req, res) => {
   res.render("listings/new.ejs");
 }
-module.exports.show = async(req,res,next) => {
-   let { id } = req.params;
+
+module.exports.show = async (req, res) => {
+  let { id } = req.params;
   const listing = await Listing.findById(id)
     .populate({
       path: "reviews",
@@ -25,14 +26,16 @@ module.exports.show = async(req,res,next) => {
   }
   res.render("listings/show.ejs", { listing });
 }
-module.exports.createpost = async(req,res,next)=> {
-    const newlisting = new Listing(req.body.listing);
-    newlisting.owner = req.user._id;
-    await newlisting.save();
-    req.flash("success", "Successfully listing created");
-    res.redirect("/listings");
+
+module.exports.createpost = async (req, res) => {
+  const newlisting = new Listing(req.body.listing);
+  newlisting.owner = req.user._id;
+  await newlisting.save();
+  req.flash("success", "Successfully listing created");
+  res.redirect("/listings");
 }
-module.exports.edit = async (req, res, next) => {
+
+module.exports.edit = async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
   if (!listing) {
@@ -41,13 +44,15 @@ module.exports.edit = async (req, res, next) => {
   }
   res.render("listings/edit.ejs", { listing });
 }
-module.exports.update = async (req, res, next) => {
+
+module.exports.update = async (req, res) => {
   const { id } = req.params;
-  const listing = await Listing.findByIdAndUpdate(id  , { ...req.body.listing }); 
+  await Listing.findByIdAndUpdate(id, { ...req.body.listing }); 
   req.flash("success", "Successfully listing updated");
   res.redirect(`/listings/${id}`);  
 }
-module.exports.delete = async (req,res,next) => {
+
+module.exports.delete = async (req, res) => {
   let { id } = req.params;
   let deleteListing = await Listing.findByIdAndDelete(id);
   req.flash("success", "Successfully listing deleted");

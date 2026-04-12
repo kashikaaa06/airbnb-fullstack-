@@ -1,19 +1,16 @@
 const Review = require("../models/review.js");
 const Listing = require("../models/listing.js");
-module.exports.post = async (req,res,next) => {
-      let { id } = req.params;
-  console.log("=== REVIEW POST DEBUG ===");
-  console.log("Listing ID from params:", id);
+
+module.exports.post = async (req, res) => {
+  let { id } = req.params;
   
   let listing = await Listing.findById(id);
-  console.log("Listing found:", listing ? "Yes" : "No");
   
   if (!listing) {
     req.flash("error", "Listing not found");
     return res.redirect("/listings");
   }
-};
- module.exports.delete = async (req,res,next) => {
+  
   let newreview = new Review(req.body.review);
   newreview.author = req.user._id;
 
@@ -22,4 +19,13 @@ module.exports.post = async (req,res,next) => {
   await listing.save();
   req.flash("success", "Review added successfully!");
   res.redirect(`/listings/${listing._id}`);
+};
+
+module.exports.delete = async (req, res) => {
+  let { id, reviewId } = req.params;
+  
+  await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+  await Review.findByIdAndDelete(reviewId);
+  req.flash("success", "Review deleted successfully!");
+  res.redirect(`/listings/${id}`);
 };

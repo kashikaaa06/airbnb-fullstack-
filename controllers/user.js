@@ -1,5 +1,5 @@
-const User = require("../models/user.js");  // FIXED: changed "..models" to "../models"
-const Listing = require("../models/listing.js");  // FIXED: changed "..models" to "../models"
+const User = require("../models/user.js"); 
+const Listing = require("../models/listing.js"); 
 
 module.exports.register = async (req, res, next) => {
   let { username, email, password } = req.body;

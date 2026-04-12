@@ -1,0 +1,89 @@
+/* Star Rating Styles */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 30px;
+    cursor: pointer;
+    color: #ddd;
+    transition: all 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #ffc107;
+}
+
+.star-rating input:checked + label:hover,
+.star-rating input:checked + label:hover ~ label,
+.star-rating input:checked ~ label:hover,
+.star-rating input:checked ~ label:hover ~ label,
+.star-rating label:hover ~ input:checked ~ label {
+    color: #ffc107;
+}
+
+/* Display Stars for Reviews */
+.review-stars {
+    display: inline-block;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.review-stars i {
+    margin-right: 2px;
+}
+
+.review-stars .fas {
+    color: #ffc107;
+}
+
+.review-stars .far {
+    color: #ddd;
+}
+
+/* Rating Badge */
+.rating-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #ffc107;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.rating-badge i {
+    margin-right: 4px;
+    color: #000;
+}
+
+/* Hover effect for stars */
+.star-rating label {
+    transition: transform 0.1s ease;
+}
+
+.star-rating label:hover {
+    transform: scale(1.1);
+}
+
+/* Rating Container */
+.rating-container {
+    margin-bottom: 15px;
+}
+
+.rating-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
