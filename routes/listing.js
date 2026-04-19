@@ -6,7 +6,9 @@ const { listingSchema } = require("../schema.js");
 const { loggedin, isOwner } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
 const multer=require("multer");
-const upload=multer({dest:"uploads/"});
+const {storage} = require("../cloudconfig.js");
+const upload=multer({storage: storage});
+
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   if (error) {
