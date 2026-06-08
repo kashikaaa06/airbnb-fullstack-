@@ -11,15 +11,8 @@ const listingSchema = new Schema({
     required: true
   },
   image: {
-    filename: {
-      type: String,
-      default: "listingimage"
-    },
-    url: {
-      type: String,
-      default: "https://media-cdn.tripadvisor.com/media/photo-s/18/4b/c3/b8/and-into-the-forest-i.jpg",
-      set: (v) => v === "" ? "https://media-cdn.tripadvisor.com/media/photo-s/18/4b/c3/b8/and-into-the-forest-i.jpg" : v
-    }
+   url: String,
+   filename: String , 
   },
   price: Number,
   location: String,
