@@ -14,14 +14,15 @@
         <textarea name="listing[description]" id="description" class="form-control" type="text" required><%= listing.description %></textarea>
         </div><br><br>
         <div class="mb-3">
+        Original Image:<br> <br>
+        <img src="<%= originalimage %>" ><br> <br> </div></div>
+
+        <div class="mb-3">
         <label for="image" class="form-label">Upload new image</label>    
        <input name="image" id="image" class="form-control"  type="file"/>
        </div><br><br>
        <div class="mb-3">
-      <!---- <label for="image-url" class="form-label">Url</label>
-       <input name="listing[image][url]" id="image-url" class="form-control" value="<%= listing.image.url %>" type="text" required/>
-       <div class="invalid-feedback"></div>
-       </div><br><br> -->
+    
        <div class="row">
        <div class="mb-3 col-md-4 ">
         <label for="price" class="form-label">Price</label>
