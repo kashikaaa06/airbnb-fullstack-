@@ -47,7 +47,7 @@ router
 router  
   .route("/:id")
   .get(wrapAsync(listingController.show))
-  .put(loggedin, isOwner, wrapAsync(listingController.update))
+  .put(loggedin, isOwner, upload.single("image"), wrapAsync(listingController.update))
   .delete(loggedin, isOwner, wrapAsync(listingController.delete));
  
 router.get("/:id/edit", loggedin, isOwner, wrapAsync(listingController.edit));

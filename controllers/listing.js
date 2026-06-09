@@ -35,7 +35,6 @@ module.exports.createpost = async (req, res) => {
     req.flash("error", "Please upload an image");
     return res.redirect("/listings/new");
   }
-  
   let url = req.file.path;
   let filename = req.file.filename;
   
@@ -69,7 +68,13 @@ module.exports.edit = async (req, res) => {
 
 module.exports.update = async (req, res) => {
   const { id } = req.params;
-  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+ let listing =  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+ if (  req.file)  { 
+ let url = req.file.path;
+  let filename = req.file.filename;
+  listing.image = {url: url, filename: filename}; 
+  await listing.save();
+ }
   req.flash("success", "Successfully listing updated");
   res.redirect(`/listings/${id}`);
 };
