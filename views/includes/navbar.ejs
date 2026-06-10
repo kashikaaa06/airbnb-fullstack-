@@ -9,27 +9,22 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/listings">
-            <i class="fas fa-home" style="color: red;"></i> Home
-          </a>
-        </li>
+            <a class="nav-link" href="/listings/new">
+              <i class="fas fa-plus-circle" style="color: red;"></i> Airbnb your home
+            </a>
+          </li>
         <% if(!currUser) { %>
           <li class="nav-item">
             <a class="nav-link" href="/signup">
-              <i class="fas fa-user-plus" style="color: red;"></i> Sign up
+              <i class="fas fa-user-plus" style="color: red;"></i> <b>Sign up</b>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/login">
-              <i class="fas fa-sign-in-alt" style="color: red;"></i> Log in
+              <i class="fas fa-sign-in-alt" style="color: red;"></i> <b>Log in</b>
             </a>
           </li>
         <% } else { %>
-          <li class="nav-item">
-            <a class="nav-link" href="/listings/new">
-              <i class="fas fa-plus-circle" style="color: red;"></i> New Listing
-            </a>
-          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
               <i class="fas fa-user-circle" style="color: red;"></i> <%= currUser.username %>
