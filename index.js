@@ -1,5 +1,5 @@
 if(process.env.NODE_ENV !== "production"){
-require("dotenv").config();
+    require("dotenv").config();
 }
 
 const express = require("express");
@@ -67,10 +67,30 @@ app.use((req, res, next) => {
   next();
 });
 
+// ========== HELPER FUNCTION FOR CATEGORY ICONS ==========
+app.locals.getCategoryIcon = (category) => {
+    const icons = {
+        trending: 'fas fa-chart-line',
+        rooms: 'fas fa-bed',
+        cities: 'fas fa-city',
+        mountains: 'fas fa-mountain',
+        castles: 'fas fa-landmark',
+        pools: 'fas fa-swimming-pool',
+        camping: 'fas fa-campground',
+        farms: 'fas fa-tractor',
+        arctic: 'fas fa-snowflake'
+    };
+    return icons[category] || 'fas fa-home';
+};
+// ========== END HELPER FUNCTION ==========
+
 app.use("/listings", listingrouter);
 app.use("/listings/:id/reviews", reviewrouter);
 app.use("/", userrouter);
 
+app.get("/", (req, res) => {
+  res.send("hi , I am groot");
+});
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page not found"));

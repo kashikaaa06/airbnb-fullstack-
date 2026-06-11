@@ -1,26 +1,146 @@
 <%- layout('./layouts/boilerplate') -%>
 
-<div class="container mt-4">
-    <h3>Explore</h3> <br>
+<!-- Search Bar -->
+<div class="search-bar-container mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by title, location, or country...">
+                <button class="btn btn-primary" onclick="filterListings()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <div class="row">
+<!-- Category Filters -->
+<div class="categories-section mb-4">
+    <div class="d-flex gap-3 flex-wrap justify-content-center">
+        <div class="category-pill" data-category="all">All</div>
+        <div class="category-pill" data-category="trending">📈 Trending</div>
+        <div class="category-pill" data-category="rooms">🛏️ Rooms</div>
+        <div class="category-pill" data-category="cities">🏙️ Cities</div>
+        <div class="category-pill" data-category="mountains">⛰️ Mountains</div>
+        <div class="category-pill" data-category="castles">🏰 Castles</div>
+        <div class="category-pill" data-category="pools">🏊 Pools</div>
+        <div class="category-pill" data-category="camping">⛺ Camping</div>
+        <div class="category-pill" data-category="farms">🚜 Farms</div>
+        <div class="category-pill" data-category="arctic">❄️ Arctic</div>
+    </div>
+</div>
+
+<!-- Listings Grid -->
+<div class="row" id="listingsGrid">
+    <% if(allListings && allListings.length > 0) { %>
         <% for(let listing of allListings) { %>
-        <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-            <a href="/listings/<%= listing._id %>" class="card-link">
-                <div class=" card listing-card h-100">
-                    <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" style="height: 200px; object-fit: cover;">
-                    <div class="card-img-overlay"></div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title"><%= listing.title %></h5>
-                        <p class="card-text flex-grow-1"><%= listing.description ? listing.description.substring(0, 100) + '...' : 'No description available' %></p>
-                        <div class="mt-auto">
-                            <p class="card-price fw-bold text-danger">₹<%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %></p>
-                            <p class="card-location text-muted"><%= listing.location %>, <%= listing.country %></p>
-                        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4 listing-item" 
+             data-title="<%= (listing.title || '').toLowerCase() %>" 
+             data-location="<%= (listing.location || '').toLowerCase() %>"
+             data-category="<%= listing.category || 'general' %>">
+            <a href="/listings/<%= listing._id %>" class="card-link text-decoration-none">
+                <div class="card listing-card h-100 border-0 shadow-sm">
+                    <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" style="height: 220px; object-fit: cover; border-radius: 16px;">
+                    <div class="card-body px-1">
+                        <h6 class="card-title mb-1"><%= listing.title %></h6>
+                        <p class="card-text text-muted small mb-1"><%= listing.location %>, <%= listing.country %></p>
+                        <p class="card-text fw-bold mb-0">₹<%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %> <span class="small fw-normal text-muted">night</span></p>
                     </div>
                 </div>
             </a>
         </div>
         <% } %>
-    </div>
+    <% } else { %>
+        <div class="col-12 text-center py-5">
+            <h4>No listings found</h4>
+            <p class="text-muted">Be the first to create a listing!</p>
+        </div>
+    <% } %>
 </div>
+
+<div id="noResults" class="text-center py-5" style="display: none;">
+    <h4>No listings found</h4>
+    <p class="text-muted">Try adjusting your search</p>
+</div>
+
+<style>
+.search-bar-container {
+    margin-top: 20px;
+}
+
+.category-pill {
+    padding: 8px 20px;
+    background: #f0f0f0;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.category-pill:hover, .category-pill.active {
+    background: #ff385c;
+    color: white;
+}
+
+.listing-card {
+    transition: transform 0.2s ease;
+}
+
+.listing-card:hover {
+    transform: translateY(-4px);
+}
+
+.card-img-top {
+    height: 220px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+</style>
+
+<script>
+let currentCategory = 'all';
+
+// Wait for DOM to fully load
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryPills = document.querySelectorAll('.category-pill');
+    if (categoryPills.length > 0) {
+        categoryPills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                filterListings();
+            });
+        });
+    }
+});
+
+function filterListings() {
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    const listings = document.querySelectorAll('.listing-item');
+    let visibleCount = 0;
+    
+    listings.forEach(listing => {
+        const title = listing.dataset.title || '';
+        const location = listing.dataset.location || '';
+        const category = listing.dataset.category || 'general';
+        
+        const matchesSearch = searchTerm === '' || title.includes(searchTerm) || location.includes(searchTerm);
+        const matchesCategory = currentCategory === 'all' || category === currentCategory;
+        
+        if (matchesSearch && matchesCategory) {
+            listing.style.display = 'block';
+            visibleCount++;
+        } else {
+            listing.style.display = 'none';
+        }
+    });
+    
+    const noResults = document.getElementById('noResults');
+    if (noResults) {
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+}
+</script>
