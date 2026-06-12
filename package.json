@@ -1,4 +1,9 @@
 {
+  
+    "engines":{
+      "node": "v24.5.0"
+    },
+  
   "name": "airbnb-site",
   "version": "1.0.0",
   "description": "",
