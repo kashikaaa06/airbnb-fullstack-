@@ -1,18 +1,17 @@
 if(process.env.NODE_ENV !== "production"){
     require("dotenv").config();
 }
- 
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
- 
 
 const mongo_url = process.env.ATLAS_DB_URL;
- 
+
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -24,13 +23,11 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const Listing = require("./models/listing.js");
- 
 
 if (!mongo_url) {
-    console.error("error");
+    console.error("ERROR: ATLAS_DB_URL environment variable is not set");
     process.exit(1);
 }
- 
 
 main()
     .then(() => {
@@ -40,23 +37,24 @@ main()
         console.error("✗ MongoDB Connection Error:", err.message);
         process.exit(1);
     });
- 
+
 async function main() {
     await mongoose.connect(mongo_url);
 }
 
-const store = MongoStore.create({
-    mongoUrl: mongo_url,
-    touchAfter: 24 * 3600 
+const store = new MongoDBStore({
+    uri: mongo_url,
+    collection: 'sessions',
+    expires: 1000 * 60 * 60 * 24 * 7
 });
- 
-store.on("error", (err) => {
-    console.error("❌ SESSION STORE ERROR:", err.message);
+
+store.on('error', function(error) {
+    console.error("❌ SESSION STORE ERROR:", error.message);
 });
- 
+
 const sessionOptions = {
     store,
-    secret: process.env.SESSION_SECRET, 
+    secret: process.env.SESSION_SECRET || "mysecretstring",
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -68,7 +66,6 @@ const sessionOptions = {
     }
 };
 
-
 app.engine('ejs', ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -79,7 +76,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(cookieParser());
 app.use(session(sessionOptions));
 app.use(flash());
-
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -93,6 +89,7 @@ app.use((req, res, next) => {
     res.locals.currUser = req.user;
     next();
 });
+
 app.locals.getCategoryIcon = (category) => {
     const icons = {
         trending: 'fas fa-chart-line',
