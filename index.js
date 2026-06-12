@@ -8,7 +8,9 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
-const mongo_url = "mongodb://127.0.0.1:27017/travelxgo";
+//const mongo_url = "mongodb://127.0.0.1:27017/travelxgo";
+
+const mongo_url = process.env.ATLAS_DB_URL;
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
