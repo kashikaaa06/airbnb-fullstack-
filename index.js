@@ -63,19 +63,20 @@ store.on('connected', function() {
     console.log("✓ Session store connected to MongoDB");
 });
 
+// ========== SESSION OPTIONS ==========
 const sessionOptions = {
     store: store,
     secret: process.env.SESSION_SECRET || "mysecretstring",
     resave: false,
-    saveUninitialized: false,  // Changed to false - only save when modified
+    saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7,  // 7 days in milliseconds
+        maxAge: 1000 * 60 * 60 * 24 * 7,  // 7 days
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",  // HTTPS only in production
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
-        domain: process.env.NODE_ENV === "production" ? undefined : undefined
+        secure: true,  // Always true for Render (HTTPS)
+        sameSite: 'lax',  // Changed from 'none' to 'lax' for better compatibility
+        path: '/'
     },
-    name: 'travelxgo_sessionId'  // Custom session name
+    name: 'travelxgo.sid'
 };
 
 console.log("📋 Session Config:", {
@@ -84,12 +85,18 @@ console.log("📋 Session Config:", {
     sameSite: sessionOptions.cookie.sameSite,
     maxAge: sessionOptions.cookie.maxAge
 });
-// ================================================
+// =====================================
 
 // ========== EXPRESS SETUP ==========
 app.engine('ejs', ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+// Trust proxy for Render
+if (process.env.NODE_ENV === "production") {
+    app.set('trust proxy', 1);  // Important for Render!
+}
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -112,11 +119,13 @@ passport.deserializeUser(User.deserializeUser());
 
 // ========== MIDDLEWARE - Flash & User ==========
 app.use((req, res, next) => {
-    // Log session info in development
-    if (process.env.NODE_ENV !== "production") {
-        console.log("📍 Session ID:", req.sessionID);
-        console.log("👤 User:", req.user ? req.user.username : "Not logged in");
-    }
+    // Debug logging
+    console.log({
+        timestamp: new Date().toISOString(),
+        sessionID: req.sessionID,
+        user: req.user ? req.user.username : "Not logged in",
+        path: req.path
+    });
     
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
